@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.czsc.dao.StockTableMapper">
+    <resultMap id="BaseResultMap" type="com.czsc.entity.StockTable">
+        <result column="symbol" jdbcType="VARCHAR" property="symbol"/>
+        <result column="period" jdbcType="VARCHAR" property="period"/>
+        <result column="dt" jdbcType="TIMESTAMP" property="dt"/>
+        <result column="open" jdbcType="DECIMAL" property="open"/>
+        <result column="high" jdbcType="DECIMAL" property="high"/>
+        <result column="low" jdbcType="DECIMAL" property="low"/>
+        <result column="close" jdbcType="DECIMAL" property="close"/>
+        <result column="volume" jdbcType="DECIMAL" property="volume"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.czsc.entity.StockTable">
+        insert into stock_table (symbol, period, `dt`, `open`,
+                                 high, low, `close`, volume,
+                                 update_time)
+        values (#{symbol,jdbcType=VARCHAR}, #{period,jdbcType=VARCHAR}, #{dt,jdbcType=TIMESTAMP},
+                #{open,jdbcType=DECIMAL},
+                #{high,jdbcType=DECIMAL}, #{low,jdbcType=DECIMAL}, #{close,jdbcType=DECIMAL},
+                #{volume,jdbcType=DECIMAL},
+                #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select symbol,
+               period,
+               `dt`,
+               `open`,
+               high,
+               low,
+               `close`,
+               volume,
+               update_time
+        from stock_table
+    </select>
+
+    <select id="getStockTablesBySymbolAndPeriod" resultMap="BaseResultMap">
+        select symbol,
+               period,
+               `dt`,
+               `open`,
+               high,
+               low,
+               `close`,
+               volume,
+               update_time
+        from stock_table
+        where symbol = #{symbol}
+          and period = #{period}
+          and volume > 0
+        <![CDATA[ dt <= '1997-03-06 15:00:00']]>
+        order by `dt` ASC
+    </select>
+
+    <insert id="replaceStockTables">
+        replace into stock_table (symbol, period, `dt`, `open`,high, low, `close`, volume,update_time)
+        values
+        <foreach collection="list" item="it" separator=",">
+            (#{it.symbol,jdbcType=VARCHAR}, #{it.period,jdbcType=VARCHAR}, #{it.dt,jdbcType=TIMESTAMP}, #{it.open,jdbcType=DECIMAL},
+            #{it.high,jdbcType=DECIMAL}, #{it.low,jdbcType=DECIMAL}, #{it.close,jdbcType=DECIMAL}, #{it.volume,jdbcType=DECIMAL},
+            #{it.updateTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+
+    <delete id="deleteAllData">
+        truncate table stock_table
+    </delete>
+</mapper>
